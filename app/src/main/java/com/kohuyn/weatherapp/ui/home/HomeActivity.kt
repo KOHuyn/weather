@@ -110,24 +110,24 @@ class HomeActivity : BaseActivity(),LocationListener {
     }
     private fun setIconWeather(icon:String){
         when(icon){
-            "01d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.sun_shining))}
-            "01n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.sun_shining))}
-            "02d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.nice_day))}
-            "02n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.nice_day))}
-            "03d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.cloudy))}
-            "03n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.cloudy))}
-            "04d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.cloudy))}
-            "04n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.cloudy))}
-            "09d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.starting_to_rain))}
-            "09n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.starting_to_rain))}
-            "10d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.starting_to_rain))}
-            "10n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.starting_to_rain))}
-            "11d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.pouring_with_rain))}
-            "11n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.pouring_with_rain))}
-            "13d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.nice_day))}//chua co hinh anh
-            "13n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.nice_day))}//chua co hinh anh
-            "50d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.cloudy))}//chua co hinh anh
-            "50n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.cloudy))}//chua co hinh anh
+            "01d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_1d))}
+            "01n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_1d))}
+            "02d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_2d))}
+            "02n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_2n))}
+            "03d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_3d))}
+            "03n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_3d))}
+            "04d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_4d))}
+            "04n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_4d))}
+            "09d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_9d))}
+            "09n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_9d))}
+            "10d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_10d))}
+            "10n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_10d))}
+            "11d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_11d))}
+            "11n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_11d))}
+            "13d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_13d))}
+            "13n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_13d))}
+            "50d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_50d))}
+            "50n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_50d))}
         }
     }
 

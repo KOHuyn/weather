@@ -18,9 +18,10 @@
     android:layout_marginLeft="@dimen/_20sdp" />
     <ImageView
         android:id="@+id/imgIconDescription"
-        android:layout_width="@dimen/_50sdp"
+        android:layout_width="@dimen/_30sdp"
         android:layout_height="match_parent"
-        android:src="@drawable/ic_02"
+        android:src="@drawable/ic_01d"
+        android:layout_marginEnd="@dimen/_10sdp"
         />
     <TextView
         android:id="@+id/txtTemperature"
