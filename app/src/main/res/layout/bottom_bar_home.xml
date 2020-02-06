@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:coverflow="http://schemas.android.com/tools"
+    android:id="@+id/bottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="@dimen/_40sdp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <LinearLayout
+        android:id="@+id/bg_bottomSheet_transparent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/clr_transparent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/txtSwipe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="swipe up to detail"
+            android:textColor="@color/clr_white"
+            android:textSize="@dimen/_10sdp"
+            android:textStyle="italic"
+            android:gravity="center"
+            />
+        <View
+            android:id="@+id/clickBottomSheet"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_4sdp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@drawable/bg_bottom_sheet" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/bg_bottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/bg_bottomSheet_transparent"
+        android:layout_marginTop="-2dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcvHourWeather"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_70sdp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            coverflow:listitem="@layout/item_hour_weather" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_300sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="-25dp"
+            app:cardBackgroundColor="@color/clr_transparent"
+            app:cardCornerRadius="@dimen/_20sdp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_18sdp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Forecast"
+                android:textColor="@color/clr_white"
+                android:textSize="@dimen/_18sdp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcvDayWeather"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_45sdp"
+                android:layout_marginBottom="@dimen/_20sdp"
+                coverflow:listitem="@layout/item_day_weather" />
+        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
+
+</RelativeLayout>

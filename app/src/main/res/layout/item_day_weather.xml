@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_30sdp"
+    android:orientation="horizontal"
+    android:layout_marginBottom="@dimen/_10sdp">
+<TextView
+    android:id="@+id/txtDateTime"
+    android:layout_weight="1"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    tools:text="Tomorrow"
+    android:gravity="start|center"
+    android:textSize="@dimen/_13sdp"
+    android:fontFamily="sans-serif-black"
+    android:textColor="@color/clr_white"
+    android:layout_marginLeft="@dimen/_20sdp" />
+    <ImageView
+        android:id="@+id/imgIconDescription"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_02"
+        />
+    <TextView
+        android:id="@+id/txtTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="27°"
+        android:textColor="@color/clr_white"
+        android:gravity="center"
+        android:fontFamily="sans-serif-medium"
+        android:layout_marginRight="@dimen/_20sdp"
+        android:textSize="@dimen/_10sdp" />
+</LinearLayout>

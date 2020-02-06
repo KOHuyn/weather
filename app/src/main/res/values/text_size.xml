@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <dimen name="very_large_size">25sp</dimen>
+  <dimen name="very_very_large_size">27sp</dimen>
+  <dimen name="very_small_size">11sp</dimen>
+  <dimen name="large_size">20sp</dimen>
+  <dimen name="normal_size">15sp</dimen>
+  <dimen name="small_size">13sp</dimen>
+  <dimen name="_10sp">10sp</dimen>
+  <dimen name="titles_size">40sp</dimen>
+  <dimen name="default_size">15sp</dimen>
+  <dimen name="normal_large_size">16sp</dimen>
+  <dimen name="text_size_20sp">20sp</dimen>
+  <dimen name="maximum_size">30sp</dimen>
+  <dimen name="_9sp">9sp</dimen>
+  <dimen name="text_size_rank">30sp</dimen>
+</resources>

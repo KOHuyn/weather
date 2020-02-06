@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.navigation.NavigationView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/clr_blue"
+    android:id="@+id/navigationView"
+    android:layout_gravity="end">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <EditText
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:id="@+id/edtSearch"
+            android:hint="Search"
+            android:backgroundTint="@color/clr_white"
+            android:textColor="@color/clr_white"
+            android:drawableLeft="@drawable/ic_search"
+            android:textColorHint="@color/clr_text_hint"
+            android:drawablePadding="@dimen/_5sdp"
+            android:textCursorDrawable="@null"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcvCountry"
+            android:layout_below="@+id/edtSearch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/item_country"/>
+    </RelativeLayout>
+</com.google.android.material.navigation.NavigationView>

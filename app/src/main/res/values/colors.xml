@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="clr_toolbar">#2E77DE</color>
+    <color name="clr_black_effective">#2a2a2a</color>
+    <color name="clr_white">#ffffff</color>
+    <color name="clr_transparent">#00ffffff</color>
+    <color name="clr_text_main">#637b8e</color>
+    <color name="clr_text_sub_main">#516A7B</color>
+    <color name="clr_red">#E31B23</color>
+    <color name="clr_black">#000000</color>
+    <color name="clr_main_background">#f2f2f2</color>
+    <color name="clr_brown">#f2f2f2</color>
+    <color name="clr_blue">#2e77de</color>
+    <color name="clr_semi_blue">#008A9A</color>
+    <color name="clr_search">#f1f5f8</color>
+    <color name="clr_edt_background">#f5f5f5</color>
+    <color name="clr_text_black">#737474</color>
+    <color name="clr_text_light_gray">#BBBBBB</color>
+    <color name="clr_text_light_pink">#FF8080</color>
+    <color name="clr_text_detail_cate">#DDDDDD</color>
+    <color name="clr_text_name_cate">#999999</color>
+    <color name="clr_w">#1A000000</color>
+    //bg
+    <color name="clr_weather_background_pink">#F8BBD0</color>
+    <color name="clr_weather_background_pink_forecast">#EF9A9A</color>
+    <color name="clr_weather_background_green">#53B6A8</color>
+    <color name="clr_weather_background_green_forecast">#80CBC4</color>
+    <color name="clr_weather_background_orange">#ED6D3D</color>
+    <color name="clr_weather_background_orange_light">#E69966</color>
+    <color name="clr_weather_background_brown_light">#E0DFE2</color>
+    //
+    <color name="clr_text_hint">#F9FBE7</color>
+
+</resources>
