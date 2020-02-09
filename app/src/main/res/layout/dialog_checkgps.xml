@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_30sdp"
+        android:layout_marginEnd="@dimen/_30sdp"
+        android:background="@drawable/bg_radius"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:onClick="@{() -> checkinternetModel.cancel() }"
+                app:srcCompat="@drawable/ic_cancel"
+                tools:ignore="VectorDrawableCompat" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/imgNointernet"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_100sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:contentDescription="TODO"
+            app:srcCompat="@drawable/nogps" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:text="Whoops"
+            android:textColor="@color/clr_black"
+            android:textSize="@dimen/_20ssp"
+            android:fontFamily="sans-serif-medium"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:layout_marginEnd="@dimen/_25sdp"
+            android:gravity="center"
+            android:text="@string/str_no_gps"
+            android:textColor="@color/clr_text_black"
+            android:textSize="@dimen/_12sdp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:layout_marginBottom="@dimen/_30sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/_40sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:id="@+id/btnYes"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_30sdp"
+                android:background="@drawable/gradient"
+                android:gravity="center"
+                android:onClick="@{() -> checkinternetModel.reload()}"
+                android:text="Yes"
+                android:textColor="@color/clr_white"
+                android:textSize="@dimen/_15ssp" />
+
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/btnNo"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_40sdp"
+                android:background="@drawable/gradient"
+                android:gravity="center"
+                android:text="No"
+                android:textColor="@color/clr_white"
+                android:textSize="@dimen/_15ssp" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

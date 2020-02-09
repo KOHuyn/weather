@@ -3,25 +3,38 @@ package com.kohuyn.weatherapp.ui.home
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.location.*
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.AlphaAnimation
+import android.view.animation.AnimationUtils
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.load.engine.Resource
 import com.core.BaseActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kohuyn.weatherapp.R
 import com.kohuyn.weatherapp.data.model.Country
 import com.kohuyn.weatherapp.data.model.DayWeather
 import com.kohuyn.weatherapp.data.model.HourWeather
+import com.kohuyn.weatherapp.data.model.city.City
 import com.kohuyn.weatherapp.data.model.currentweather.ParentCurrentWeather
 import com.kohuyn.weatherapp.data.model.hourweather.ParentHourWeather
+import com.kohuyn.weatherapp.ui.dialog.addcity.AddCityDialog
+import com.kohuyn.weatherapp.ui.dialog.delete.DeleteDialog
+import com.kohuyn.weatherapp.ui.dialog.gpsdialog.TurnOnGPSDialog
 import com.kohuyn.weatherapp.ui.home.adapter.CountryAdapter
 import com.kohuyn.weatherapp.ui.home.adapter.DayAdapter
 import com.kohuyn.weatherapp.ui.home.adapter.HourAdapter
@@ -32,25 +45,32 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.bottom_bar_home.*
 import kotlinx.android.synthetic.main.content_home.*
 import kotlinx.android.synthetic.main.navigation_view.*
+import org.json.JSONArray
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.IOException
+import java.io.InputStream
 import java.util.*
 import kotlin.math.round
 
-class HomeActivity : BaseActivity(),LocationListener {
+class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogCallback,DeleteDialog.OnDialogCallback,AddCityDialog.OnDialogCallback {
+
+
     lateinit var sheetBehavior: BottomSheetBehavior<RelativeLayout>
     private val homeViewModel by viewModel<HomeViewModel>()
     private lateinit var adapterHourWeather: HourAdapter
     private lateinit var adapterDayWeather: DayAdapter
     private lateinit var adapterCountry: CountryAdapter
-    private lateinit var  parentCurrentWeather: ParentCurrentWeather
-    private lateinit var  parentWeather: ParentHourWeather
+    private lateinit var parentCurrentWeather: ParentCurrentWeather
+    private lateinit var parentWeather: ParentHourWeather
     private var listHour: ArrayList<HourWeather> = arrayListOf()
     private var listDay: ArrayList<DayWeather> = arrayListOf()
     private var listCity: ArrayList<Country> = arrayListOf()
-    private lateinit var locationManager:LocationManager
-    private var lat:Double = 0.0
-    private var lon:Double = 0.0
+    private var listCityPicker: ArrayList<City> = arrayListOf()
+    private lateinit var locationManager: LocationManager
+    private var lat: Double = 0.0
+    private var lon: Double = 0.0
+    var isCollapse = false
+    var timeZone = 25200
     override fun getLayoutId(): Int = R.layout.activity_home
 
     override fun updateUI(savedInstanceState: Bundle?) {
@@ -63,13 +83,35 @@ class HomeActivity : BaseActivity(),LocationListener {
         }
         checkPermission()
         setLocation()
+        setGPS()
         setDataViewModel()
         setBottomSheetCallBack()
-        init()
         setNav()
         setRcvCountry()
-        setTheme()
+        addJson()
         KeyboardUtils.hideKeyBoardWhenClickOutSide(window.decorView.rootView, this)
+    }
+    private fun addJson(){
+        var json:String ?= null
+        try {
+            val inputStream: InputStream = assets.open("city.json")
+            json = inputStream.bufferedReader().use{ it.readText()  }
+
+                var jsonArr = JSONArray(json)
+
+                for (i in 0..jsonArr.length()-1){
+                    var jsonObj = jsonArr.getJSONObject(i)
+                    listCityPicker.add(City(jsonObj.getInt("id"),jsonObj.getString("name"),jsonObj.getString("country")))
+                }
+        }catch (e:IOException){
+            e.printStackTrace()
+        }
+    }
+
+    override fun onSendData(isCheck: Boolean) {
+        if (isCheck) {
+            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -81,58 +123,150 @@ class HomeActivity : BaseActivity(),LocationListener {
         setLocation()
         setDataViewModel()
     }
-    private fun setDataViewModel(){
-        addDispose(homeViewModel.getCurrentWeather(lat,lon),
-            homeViewModel.output.resultCurrentWeather.subscribe{
+
+    private fun setDataViewModel() {
+        addDispose(homeViewModel.getCurrentWeather(lat, lon),
+            homeViewModel.output.resultCurrentWeather.subscribe {
                 parentCurrentWeather = it
 //                txt_name_city.text = parentCurrentWeather.name
-                txtDestination.text = parentCurrentWeather.weather[0].description
+//                txtDestination.text = parentCurrentWeather.weather[0].description
                 txt_temp.text = Utils.convertKtoC(parentCurrentWeather.main.temp).toInt().toString()
-                txt_wind.text =  "${round(Utils.convertMstoKmh(parentCurrentWeather.wind.speed)).toInt()} km/h"
-                txt_clouds.text ="${parentCurrentWeather.clouds.all}%"
+                txt_wind.text =
+                    "${round(Utils.convertMstoKmh(parentCurrentWeather.wind.speed)).toInt()} km/h"
+                txt_clouds.text = "${parentCurrentWeather.clouds.all}%"
                 txt_humidity.text = "${parentCurrentWeather.main.humidity}%"
+                txt_sunTime.text = "${Utils.convertLongToTime(parentCurrentWeather.sys.sunrise) } - ${Utils.convertLongToTime(parentCurrentWeather.sys.sunset) }"
+                timeZone = parentCurrentWeather.timezone
                 val iconWeather = parentCurrentWeather.weather[0].icon
                 setIconWeather(iconWeather)
+                animationCollapse()
+                img_description.animate().alpha(1f).duration = 300
             }
         )
-        addDispose(homeViewModel.getHourWeather(lat,lon ),
+        addDispose(homeViewModel.getHourWeather(lat, lon),
             homeViewModel.output.resultHourWeather.subscribe {
                 parentWeather = it
-                for (i in 0..9){
-                    listHour.add(HourWeather(Utils.convertKtoC(parentWeather.list[i].main.temp),parentWeather.list[i].weather[0].icon,Utils.subHour(parentWeather.list[i].dt_txt)))
+                for (i in 0..9) {
+                    listHour.add(
+                        HourWeather(
+                            Utils.convertKtoC(parentWeather.list[i].main.temp),
+                            parentWeather.list[i].weather[0].icon,
+                            Utils.subHour(parentWeather.list[i].dt_txt,timeZone)
+                        )
+                    )
                 }
                 setRcvHourWeather()
-                for (i in 0..39 step 8){
-                    listDay.add(DayWeather(Utils.convertKtoC(parentWeather.list[i].main.temp),parentWeather.list[i].weather[0].icon,Utils.convertLongToCalendar(parentWeather.list[i].dt)))
+                for (i in 0..39 step 8) {
+                    listDay.add(
+                        DayWeather(
+                            Utils.convertKtoC(parentWeather.list[i].main.temp),
+                            parentWeather.list[i].weather[0].icon,dayOfWeek(Utils.convertLongToCalendar(parentWeather.list[i].dt)
+                            )
+                        )
+                    )
                 }
                 setRcvDayWeather()
             })
     }
-    private fun setIconWeather(icon:String){
-        when(icon){
-            "01d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_1d))}
-            "01n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_1d))}
-            "02d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_2d))}
-            "02n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_2n))}
-            "03d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_3d))}
-            "03n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_3d))}
-            "04d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_4d))}
-            "04n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_4d))}
-            "09d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_9d))}
-            "09n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_9d))}
-            "10d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_10d))}
-            "10n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_10d))}
-            "11d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_11d))}
-            "11n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_11d))}
-            "13d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_13d))}
-            "13n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_13d))}
-            "50d"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_50d))}
-            "50n"-> {img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_50d))}
+    private fun dayOfWeek(day:String):String{
+       return when(day){
+            "Mon" -> resources.getText(R.string.str_monday).toString()
+            "Tue" -> resources.getText(R.string.str_tuesday).toString()
+            "Wed" -> resources.getText(R.string.str_wednesday).toString()
+            "Thu" -> resources.getText(R.string.str_thursday).toString()
+            "Fri" -> resources.getText(R.string.str_friday).toString()
+            "Sat" -> resources.getText(R.string.str_saturday).toString()
+            "Sun" -> resources.getText(R.string.str_sunday).toString()
+            else -> resources.getText(R.string.str_monday).toString()
+        }
+    }
+
+    private fun setIconWeather(icon: String) {
+        when (icon) {
+            "01d" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_1d))
+                txtDestination.text = resources.getText(R.string.str_clear_sky)
+            }
+            "01n" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_1d))
+                txtDestination.text = resources.getText(R.string.str_clear_sky)
+            }
+            "02d" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_2d))
+                txtDestination.text = resources.getText(R.string.str_few_clouds)
+            }
+            "02n" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_2n))
+                txtDestination.text = resources.getText(R.string.str_few_clouds)
+            }
+            "03d" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_3d))
+                txtDestination.text = resources.getText(R.string.str_scattered_clouds)
+        }
+            "03n" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_3d))
+                txtDestination.text = resources.getText(R.string.str_scattered_clouds)
+            }
+            "04d" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_4d))
+                txtDestination.text = resources.getText(R.string.str_broken_clouds)
+            }
+            "04n" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_4d))
+                txtDestination.text = resources.getText(R.string.str_broken_clouds)
+            }
+            "09d" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_9d))
+                txtDestination.text = resources.getText(R.string.str_shower_rain)
+            }
+            "09n" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_9d))
+                txtDestination.text = resources.getText(R.string.str_shower_rain)
+            }
+            "10d" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_10d))
+                txtDestination.text = resources.getText(R.string.str_rain)
+            }
+            "10n" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_10d))
+                txtDestination.text = resources.getText(R.string.str_rain)
+            }
+            "11d" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_11d))
+                txtDestination.text = resources.getText(R.string.str_thunderstorm)
+            }
+            "11n" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_11d))
+                txtDestination.text = resources.getText(R.string.str_thunderstorm)
+            }
+            "13d" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_13d))
+                txtDestination.text = resources.getText(R.string.str_snow)
+            }
+            "13n" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_13d))
+                txtDestination.text = resources.getText(R.string.str_snow)
+            }
+            "50d" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_50d))
+                txtDestination.text = resources.getText(R.string.str_mist)
+            }
+            "50n" -> {
+                img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_50d))
+                txtDestination.text = resources.getText(R.string.str_mist)
+            }
         }
     }
 
     private fun setNav() {
         img_bgWeather.setOnClickListener { drawerLayout.openDrawer(GravityCompat.END) }
+        btn_back.setOnClickListener { drawerLayout.closeDrawers() }
+        etd_search.setOnFocusChangeListener { view, b ->
+            val cityDialog = AddCityDialog()
+            cityDialog.setListCity(listCityPicker)
+            cityDialog.setOnDialogCallback(this@HomeActivity)
+            cityDialog.show(supportFragmentManager,"addCity")
+        }
     }
 
     private fun setBottomSheetCallBack() {
@@ -142,22 +276,75 @@ class HomeActivity : BaseActivity(),LocationListener {
             }
 
             override fun onStateChanged(p0: View, p1: Int) {
+
                 if (sheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
-                    txtDestination.setVisibility(true)
-                    scrollViewWeather.setVisibility(true)
-                    img_bgWeather.setVisibility(true)
-                    txt_name_city.setVisibility(true)
-                    txtSwipe.text = "swipe up to detail"
+                    if (isCollapse) {
+                        animationCollapse()
+                        val animation =
+                            AnimationUtils.loadAnimation(this@HomeActivity, R.anim.top_down)
+                        txtSwipe.text = resources.getString(R.string.str_swipe_up_to_detail)
+                        txtSwipe.startAnimation(animation)
+                    }
+                    isCollapse = false
                 }
                 if (sheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    txtDestination.setVisibility(false)
-                    scrollViewWeather.setVisibility(false)
-                    img_bgWeather.setVisibility(false)
-                    txt_name_city.setVisibility(false)
-                    txtSwipe.text = " "
+                    if (!isCollapse) {
+                        animationExpand()
+                        val animation =
+                            AnimationUtils.loadAnimation(this@HomeActivity, R.anim.down_top)
+                        txtSwipe.text = resources.getString(R.string.str_swipe_down_to_home)
+                        txtSwipe.startAnimation(animation)
+                    }
+                    isCollapse = true
                 }
+
             }
         })
+    }
+
+    fun animationExpand() {
+        val animation = AnimationUtils.loadAnimation(this@HomeActivity, R.anim.slide_out_left)
+        scrollViewWeather.startAnimation(animation)
+        img_bgWeather.startAnimation(animation)
+        val animDestination =
+            AnimationUtils.loadAnimation(this@HomeActivity, R.anim.slide_out_right)
+        txtDestination.startAnimation(animDestination)
+        txt_name_city.startAnimation(animDestination)
+        txtDestination.setVisibility(false)
+        scrollViewWeather.setVisibility(false)
+        img_bgWeather.setVisibility(false)
+        txt_name_city.setVisibility(false)
+        val rcvHourAnimation =
+            AnimationUtils.loadAnimation(this@HomeActivity, R.anim.slide_from_right)
+        rcvHourWeather.startAnimation(rcvHourAnimation)
+        val rcvDayAnimation =
+            AnimationUtils.loadAnimation(this@HomeActivity, R.anim.slide_from_left)
+        cvRcvDay.startAnimation(rcvDayAnimation)
+        rcvHourWeather.setVisibility(true)
+        cvRcvDay.setVisibility(true)
+    }
+
+    fun animationCollapse() {
+        val animScroll = AnimationUtils.loadAnimation(this@HomeActivity, R.anim.slide_from_right)
+        scrollViewWeather.startAnimation(animScroll)
+        img_bgWeather.startAnimation(animScroll)
+        val animDestination =
+            AnimationUtils.loadAnimation(this@HomeActivity, R.anim.slide_from_left)
+        txtDestination.startAnimation(animDestination)
+        txt_name_city.startAnimation(animDestination)
+        txtDestination.setVisibility(true)
+        scrollViewWeather.setVisibility(true)
+        img_bgWeather.setVisibility(true)
+        txt_name_city.setVisibility(true)
+
+        val rcvHourAnimation =
+            AnimationUtils.loadAnimation(this@HomeActivity, R.anim.slide_out_left)
+        rcvHourWeather.startAnimation(rcvHourAnimation)
+        val rcvDayAnimation =
+            AnimationUtils.loadAnimation(this@HomeActivity, R.anim.slide_out_right)
+        cvRcvDay.startAnimation(rcvDayAnimation)
+        rcvHourWeather.setVisibility(false)
+        cvRcvDay.setVisibility(false)
     }
 
     private fun setRcvHourWeather() {
@@ -184,25 +371,37 @@ class HomeActivity : BaseActivity(),LocationListener {
             override fun onItemClickListener(view: View, position: Int) {
                 toast(listCity[position].nameCountry)
             }
+
+            override fun onDeleteItem(view: View, position: Int) {
+                val deleteDialog = DeleteDialog()
+                deleteDialog.setOnDialogCallback(this@HomeActivity)
+                deleteDialog.isCancelable = true
+                deleteDialog.show(supportFragmentManager,"delete")
+            }
         })
     }
 
-    private fun setTheme() {
-        navigationView.setBackgroundColor(resources.getColor(R.color.clr_weather_background_pink))
-//        bg_bottomSheet.setBackgroundColor((resources.getColor(R.color.clr_weather_background_pink)))
+    private fun setGPS() {
+        val manager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            toast("No GPS")
+            val gps = TurnOnGPSDialog()
+            gps.setOnDialogCallback(this)
+            gps.isCancelable = true
+            gps.show(supportFragmentManager, "ok")
+        }
     }
 
-    private fun init() {
-        listCity.add(Country("Ha Noi", "123"))
-        listCity.add(Country("Vinh Phuc", "123"))
-        listCity.add(Country("Ho Chi Minh", "123"))
-        listCity.add(Country("Ha Tinh", "123"))
-        listCity.add(Country("Nghe An", "123"))
-        listCity.add(Country("Hue", "123"))
-    }
-    private fun checkPermission(){
-        if(ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED&&
-            ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
+    private fun checkPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
@@ -211,42 +410,37 @@ class HomeActivity : BaseActivity(),LocationListener {
             return
         }
     }
+
     @SuppressLint("MissingPermission")
-    private fun setLocation(){
+    private fun setLocation() {
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-//        val location: Location? = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-        val location: Location? = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        val location: Location? =
+            locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
         onLocationChanged(location)
         if (location != null) {
             lon = location.longitude
             lat = location.latitude
-            titleMap(lat,lon)
-            Log.e("latlon", "$lat - $lon " )
-        }else{
-            toast("GPS not working")
+        } else {
+            toast("Location Null")
         }
+        titleMap(lat, lon)
+        Log.e("latlon", "$lat - $lon ")
     }
 
-    private fun titleMap(lat:Double,lon:Double){
-        var street:String ?=null
-        val geocoder= Geocoder(this, Locale.getDefault())
+    private fun titleMap(lat: Double, lon: Double) {
+        val geocoder = Geocoder(this, Locale.getDefault())
         try {
-            val addrs:List<Address> = geocoder.getFromLocation(lat,lon,1)
-            if(addrs.isNotEmpty()){
-                val returnedAddr :Address = addrs[0]
+            val addrs: List<Address> = geocoder.getFromLocation(lat, lon, 1)
+            if (addrs.isNotEmpty()) {
+                val returnedAddr: Address = addrs[0]
                 txt_name_city.text = "${returnedAddr.thoroughfare}-${returnedAddr.subAdminArea}"
-//                val strReturnedAddress = StringBuilder()
-//                for (i in 0.. returnedAddr.maxAddressLineIndex){
-//                    strReturnedAddress.append(returnedAddr.getAddressLine(i)).append("")
-//                }
-//                street = strReturnedAddress.toString()
             }
-//            txt_name_city.text = street
-        }catch (ex:IOException){
+        } catch (ex: IOException) {
             ex.printStackTrace()
         }
 
     }
+
     override fun onLocationChanged(p0: Location?) {
         if (p0 != null) {
             lon = p0.longitude
@@ -261,5 +455,15 @@ class HomeActivity : BaseActivity(),LocationListener {
     }
 
     override fun onProviderDisabled(p0: String?) {
+    }
+
+    override fun onSendDataDelete(isYes: Boolean) {
+        if(isYes){
+            toast("delete")
+        }
+    }
+
+    override fun onSendDataAddCity(id: Int, name: String, country: String) {
+        listCity.add(Country(id,name,country))
     }
 }

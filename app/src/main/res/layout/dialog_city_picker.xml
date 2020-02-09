@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+  <RelativeLayout
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      android:id="@+id/rlParent"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_30sdp"
+        android:background="@color/clr_white"
+        app:cardCornerRadius="@dimen/_5sdp">
+      <RelativeLayout
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/_50sdp">
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            app:cardCornerRadius="@dimen/_20sdp">
+          <EditText
+              android:layout_marginStart="@dimen/_5sdp"
+              android:id="@+id/edtSearch"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_centerInParent="true"
+              android:hint="@string/str_hint_search"
+              android:textColorHint="@color/clr_while_bray"
+              android:drawablePadding="@dimen/_10sdp"
+              android:background="@null"
+              android:singleLine="true"
+              android:paddingEnd="@dimen/_22sdp"
+              android:drawableStart="@drawable/ic_search_blue"
+              android:textSize="@dimen/_15sdp"
+              android:textColor="@color/clr_text_black"/>
+          <ImageView
+              android:id="@+id/imgCancel"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              app:srcCompat="@drawable/ic_cancel"
+              android:layout_alignParentEnd="true"
+              android:layout_gravity="end"
+              android:layout_marginTop="@dimen/_13sdp"
+              android:layout_marginBottom="@dimen/_13sdp"
+              android:layout_marginEnd="@dimen/_10sdp"
+              tools:ignore="VectorDrawableCompat" />
+        </androidx.cardview.widget.CardView>
+
+      </RelativeLayout>
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/rcvCityDialog"
+          android:layout_marginTop="@dimen/_50sdp"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:scrollbars="vertical"
+          android:scrollbarThumbVertical="@color/clr_blue"
+          android:visibility="visible" />
+      <ProgressBar
+          android:id= "@+id/pgb_country"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_horizontal"
+          android:layout_marginTop="@dimen/_150sdp"
+          android:layout_marginBottom="@dimen/_150sdp"
+          android:visibility="gone"
+          />
+    </androidx.cardview.widget.CardView>
+  </RelativeLayout>

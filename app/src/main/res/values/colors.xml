@@ -23,6 +23,7 @@
     <color name="clr_text_light_pink">#FF8080</color>
     <color name="clr_text_detail_cate">#DDDDDD</color>
     <color name="clr_text_name_cate">#999999</color>
+    <color name="clr_while_bray">#7E8EAA</color>
     <color name="clr_w">#1A000000</color>
     //bg
     <color name="clr_weather_background_pink">#F8BBD0</color>
@@ -34,5 +35,8 @@
     <color name="clr_weather_background_brown_light">#E0DFE2</color>
     //
     <color name="clr_text_hint">#F9FBE7</color>
+    <color name="colorStartDelete">#3A5DF1</color>
+    <color name="colorBetweenDelete">#5071F1</color>
+    <color name="colorEndDelete">#748CEC</color>
 
 </resources>

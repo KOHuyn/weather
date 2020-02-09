@@ -1,4 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="app_name">Thời tiết</string>
+    <string name="str_clear_sky">Bầu trời quang đãng</string>
+    <string name="str_broken_clouds">Trời nhiều mây</string>
+    <string name="str_cloud">Mây</string>
+    <string name="str_few_clouds">Một vài đám mây</string>
+    <string name="str_forecast">Dự báo trong tuần</string>
+    <string name="str_friday">Thứ 6</string>
+    <string name="str_humidity">Độ ẩm</string>
+    <string name="str_mist">Sương mù</string>
+    <string name="str_monday">Thứ 2</string>
+    <string name="str_rain">Mưa nhẹ</string>
+    <string name="str_saturday">Thứ 7</string>
+    <string name="str_scattered_clouds">Mây rải rác</string>
+    <string name="str_shower_rain">Mưa rào</string>
+    <string name="str_snow">Tuyết</string>
+    <string name="str_sunday">Chủ nhật</string>
+    <string name="str_thunderstorm">Giông bão</string>
+    <string name="str_wind">Gió</string>
+    <string name="str_wednesday">Thứ 4</string>
+    <string name="str_tuesday">Thứ 3</string>
+    <string name="str_thursday">Thứ 5</string>
+    <string name="str_swipe_down_to_home">vuốt xuống để xem trang chủ</string>
+    <string name="str_swipe_up_to_detail">vuốt lên để xem chi tiết</string>
+    <string name="str_no_gps">Bạn chưa bật GPS.Bạn có muốn vào cài đặt để bật GPS không?</string>
+    <string name="str_yes">Có</string>
+    <string name="str_no">Không</string>
+    <string name="str_sunrise">Mặt trời mọc - lặn</string>
+    <string name="str_hint_search">Thêm thành phố</string>
+    <string name="str_delete">Xóa</string>
+    <string name="str_content_delete">Bạn có muốn xóa không?</string>
 </resources>

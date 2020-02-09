@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+
+  <FrameLayout
+      xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/_20sdp"
+        tools:ignore="UselessParent">
+
+      <TextView
+          android:id="@+id/title_LogOut"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="@drawable/bg_title_dialog_delete"
+          android:gravity="center_vertical"
+          android:paddingStart="@dimen/_8sdp"
+          android:paddingTop="@dimen/_8sdp"
+          android:paddingBottom="@dimen/_8sdp"
+          android:text="@string/str_delete"
+          android:textColor="@color/clr_white"
+          android:textSize="@dimen/_13ssp"
+          android:textStyle="bold"
+          tools:ignore="RtlSymmetry" />
+
+      <TextView
+          android:id="@+id/content_LogOut"
+          android:layout_width="match_parent"
+          android:layout_height="?attr/actionBarSize"
+          android:layout_below="@+id/title_LogOut"
+          android:background="@color/clr_white"
+          android:gravity="center_vertical"
+          android:paddingStart="@dimen/_8sdp"
+          android:text="@string/str_content_delete"
+          android:textColor="@color/clr_text_black"
+          android:textSize="@dimen/_11ssp"
+          tools:ignore="RtlSymmetry" />
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_below="@id/content_LogOut"
+          android:background="@drawable/background_yes_no_delete"
+          android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_Yes"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:text="@string/str_yes"
+            tools:ignore="ButtonStyle" />
+
+        <TextView
+            android:layout_width="@dimen/_1sdp"
+            android:layout_height="match_parent"
+            android:background="@color/clr_blue" />
+
+        <Button
+            android:id="@+id/btn_No"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@null"
+            android:text="@string/str_no"
+            tools:ignore="ButtonStyle" />
+      </LinearLayout>
+    </RelativeLayout>
+  </FrameLayout>

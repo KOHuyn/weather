@@ -10,15 +10,13 @@ object Utils {
         val round = round(c*10)/10
         return round.toFloat()
     }
-    fun subHour(s:String):String{
+    fun subHour(s:String,timeZone:Int):String{
+        val GMT = timeZone/3600
         val hour = s.substring(11,13).toInt()
-        if(hour==18){
-            return "1:00"
+        if(hour+GMT>=24){
+            return "${hour+GMT-24}:00"
         }
-        if(hour ==21){
-            return "4:00"
-        }
-        return "${hour+7}:00"
+        return "${hour+(timeZone/3600)}:00"
     }
     fun convertMstoKmh(ms:Double):Float{
         val kmh = ms/0.27777778
@@ -26,7 +24,7 @@ object Utils {
     }
     fun convertLongToTime(time: Long): String {
         val date = Date(time*1000)
-        val format = SimpleDateFormat("yyyy.MM.dd HH:mm")
+        val format = SimpleDateFormat("HH:mm")
         return format.format(date)
     }
 
@@ -48,7 +46,6 @@ object Utils {
      * @sample thứ 7
      */
     fun convertLongToCalendar(time: Long):String{
-
         val cal :Calendar = Calendar.getInstance()
         val tz :TimeZone = cal.timeZone
         val sdf  = SimpleDateFormat("HH:mm dd/MM/yyyy")
@@ -57,15 +54,6 @@ object Utils {
         cal.time = date
         val day_Week =cal.time.toString()
         val subDay = day_Week.substring(0,3)
-        return when(subDay){
-                "Mon" -> "Thứ 2"
-                "Tue" -> "Thứ 3"
-                "Wed" -> "Thứ 4"
-                "Thu" -> "Thứ 5"
-                "Fri" -> "Thứ 6"
-                "Sat" -> "Thứ 7"
-                "Sun" -> "Chủ nhật"
-            else -> "nothing"
-        }
+        return subDay
     }
 }

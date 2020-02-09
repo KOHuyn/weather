@@ -1,3 +1,33 @@
 <resources>
-    <string name="app_name">WeatherApp</string>
+    <string name="app_name">Weather</string>
+    <string name="str_wind">Wind</string>
+    <string name="str_humidity">Humidity</string>
+    <string name="str_cloud">Clouds</string>
+    <string name="str_swipe_up_to_detail">Swipe up to detail</string>
+    <string name="str_swipe_down_to_home">Swipe down to home</string>
+    <string name="str_forecast">Forecast</string>
+    <string name="str_monday">Monday</string>
+    <string name="str_tuesday">Tuesday</string>
+    <string name="str_wednesday">Wednesday</string>
+    <string name="str_thursday">Thursday</string>
+    <string name="str_friday">Friday</string>
+    <string name="str_saturday">Saturday</string>
+    <string name="str_sunday">Sunday</string>
+    <string name="str_clear_sky">Clear sky</string>
+    <string name="str_few_clouds">Few clouds</string>
+    <string name="str_scattered_clouds">Scattered clouds</string>
+    <string name="str_broken_clouds">Broken clouds</string>
+    <string name="str_shower_rain">Shower rain</string>
+    <string name="str_rain">Rain</string>
+    <string name="str_thunderstorm">Thunderstorm</string>
+    <string name="str_snow">Snow</string>
+    <string name="str_mist">Mist</string>
+    <string name="str_no_gps">No GPS turn on. Please check your GPS settings</string>
+    <string name="str_yes">Yes</string>
+    <string name="str_no">No</string>
+    <string name="str_sunrise">Sunrise</string>
+    <string name="str_hint_search"><font size = "11">Add City to Know Weather</font></string>
+    <string name="str_delete">Delete</string>
+    <string name="str_content_delete">Are you sure you want to delete?</string>
+
 </resources>

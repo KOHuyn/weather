@@ -20,7 +20,7 @@
             android:id="@+id/txtSwipe"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="swipe up to detail"
+            android:text="@string/str_swipe_up_to_detail"
             android:textColor="@color/clr_white"
             android:textSize="@dimen/_10sdp"
             android:textStyle="italic"
@@ -32,7 +32,7 @@
             android:layout_height="@dimen/_4sdp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
             android:background="@drawable/bg_bottom_sheet" />
     </LinearLayout>
 
@@ -44,20 +44,23 @@
         android:layout_marginTop="-2dp">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:visibility="invisible"
             android:id="@+id/rcvHourWeather"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_70sdp"
+            android:layout_marginTop="@dimen/_60sdp"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             coverflow:listitem="@layout/item_hour_weather" />
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cvRcvDay"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_300sdp"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="-25dp"
             app:cardBackgroundColor="@color/clr_transparent"
+            android:visibility="invisible"
             app:cardCornerRadius="@dimen/_20sdp">
 
             <TextView
@@ -65,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_18sdp"
                 android:fontFamily="sans-serif-medium"
-                android:text="Forecast"
+                android:text="@string/str_forecast"
                 android:textColor="@color/clr_white"
                 android:textSize="@dimen/_18sdp" />
 

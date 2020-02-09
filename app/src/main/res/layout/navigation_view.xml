@@ -1,32 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.navigation.NavigationView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/clr_blue"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/clr_white"
     android:id="@+id/navigationView"
     android:layout_gravity="end">
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <EditText
-            android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:id="@+id/edtSearch"
-            android:hint="Search"
-            android:backgroundTint="@color/clr_white"
-            android:textColor="@color/clr_white"
-            android:drawableLeft="@drawable/ic_search"
-            android:textColorHint="@color/clr_text_hint"
-            android:drawablePadding="@dimen/_5sdp"
-            android:textCursorDrawable="@null"
+
+        <View
+            android:id="@+id/bg_view"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_50sdp"/>
+            android:layout_height="@dimen/_120sdp"
+            android:background="@color/clr_weather_background_green_forecast"
+            />
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:src="@drawable/ic_back"
+            />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_search"
+            android:layout_width="match_parent"
+            android:layout_marginStart="@dimen/_30sdp"
+            android:layout_marginEnd="@dimen/_30sdp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/bg_view"
+            android:layout_marginTop="-20dp"
+            app:cardCornerRadius="@dimen/_15sdp"
+            android:layout_height="@dimen/_30sdp">
+            <EditText
+                android:id="@+id/etd_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textCursorDrawable="@null"
+                android:background="@null"
+                android:singleLine="true"
+                android:hint="@string/str_hint_search"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:textSize="@dimen/_11sdp"
+                android:textColorHint="@color/clr_while_bray"
+                android:drawableStart="@drawable/ic_search_blue"
+                android:drawablePadding="@dimen/_3sdp"
+                />
+        </androidx.cardview.widget.CardView>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcvCountry"
-            android:layout_below="@+id/edtSearch"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/item_country"/>
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cv_search"
+            android:layout_margin="20dp"
+            tools:listitem="@layout/item_country" />
+
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:layout_alignParentBottom="true"
+            android:background="@color/clr_transparent"
+            />
     </RelativeLayout>
 </com.google.android.material.navigation.NavigationView>
