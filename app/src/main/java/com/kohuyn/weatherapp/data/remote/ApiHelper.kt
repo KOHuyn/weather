@@ -7,4 +7,6 @@ interface ApiHelper {
     fun getCurrenWeather(lat:Double,long:Double): Single<JsonObject>
 
     fun getHourWeather(lat: Double,long: Double):Single<JsonObject>
+
+    fun getCurrenWeatherId(id:Int):Single<JsonObject>
 }

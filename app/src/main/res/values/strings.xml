@@ -29,5 +29,5 @@
     <string name="str_hint_search"><font size = "11">Add City to Know Weather</font></string>
     <string name="str_delete">Delete</string>
     <string name="str_content_delete">Are you sure you want to delete?</string>
-
+    <string name="str_bannerqc">ca-app-pub-5076265612881255/1980583664</string>
 </resources>

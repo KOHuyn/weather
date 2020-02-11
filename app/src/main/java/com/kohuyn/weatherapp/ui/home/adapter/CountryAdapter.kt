@@ -41,10 +41,8 @@ class CountryAdapter : RecyclerView.Adapter<CountryViewHolder>() {
         val item = listCountry[holder.adapterPosition]
         holder.onBind(item)
         with(holder.itemView) {
-            txtCity.text = item.nameCountry
-            cv_delete.setOnClickListener {
-                onItemClick.onDeleteItem(it,position)
-            }
+            txtCity.text = item.name
+            txt_country.text = item.nameCountry
         }
         holder.itemViewBinding.setOnClickListener {
             onItemClick.onItemClickListener(it, position)
@@ -53,6 +51,5 @@ class CountryAdapter : RecyclerView.Adapter<CountryViewHolder>() {
 
     interface OnItemClick {
         fun onItemClickListener(view: View, position: Int)
-        fun onDeleteItem(view:View,position: Int)
     }
 }

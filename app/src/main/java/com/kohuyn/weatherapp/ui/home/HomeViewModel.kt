@@ -40,6 +40,18 @@ class HomeViewModel(
                 it.printStackTrace()
             })
 
+    fun getCurrentWeatherId(id:Int) =
+        dataManager.getCurrenWeatherId(id)
+            .compose(schedulerProvider.ioToMainSingleScheduler())
+            .subscribe({
+                val strJson = it.toString()
+                val chresponse = gson.fromJson(strJson, ParentCurrentWeather::class.java)
+                Log.e("json", strJson)
+                resultCurrentWeather.onNext(chresponse)
+            }, {
+                it.printStackTrace()
+            })
+
     fun getHourWeather(lat: Double, long: Double) =
         dataManager.getHourWeather(lat, long)
             .compose(schedulerProvider.ioToMainSingleScheduler())
@@ -57,4 +69,8 @@ class HomeViewModel(
 
     override val output: HomeOutput
         get() = this
+
+    fun getCity() = dataManager.getCity()
+
+    fun setCity(id:String) = dataManager.setCity(id)
 }

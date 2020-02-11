@@ -10,18 +10,25 @@ class DeleteDialog:BaseDialog() {
 
     private lateinit var onDialogCallback:OnDialogCallback
 
+    private var position:Int=0
+
     override fun updateUI(savedInstanceState: Bundle?) {
         btn_Yes.setOnClickListener {
-            onDialogCallback.onSendDataDelete(true)
+            onDialogCallback.onSendDataDelete(true,position)
+            dismiss()
         }
         btn_No.setOnClickListener {
-            onDialogCallback.onSendDataDelete(false)
+            onDialogCallback.onSendDataDelete(false,position)
             dismiss() }
     }
+    fun setPositionDelete(position:Int){
+        this.position = position
+    }
+
     fun setOnDialogCallback(onDialogCallback: OnDialogCallback){
         this.onDialogCallback = onDialogCallback
     }
     interface OnDialogCallback{
-        fun onSendDataDelete(isYes:Boolean)
+        fun onSendDataDelete(isYes:Boolean,position:Int)
     }
 }

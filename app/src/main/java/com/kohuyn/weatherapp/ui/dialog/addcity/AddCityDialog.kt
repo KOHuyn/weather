@@ -3,6 +3,7 @@ package com.kohuyn.weatherapp.ui.dialog.addcity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.core.BaseDialog
@@ -11,8 +12,10 @@ import com.kohuyn.weatherapp.data.model.city.City
 import com.kohuyn.weatherapp.ui.dialog.addcity.adapter.CityAdapter
 import kotlinx.android.synthetic.main.dialog_city_picker.*
 import kotlinx.android.synthetic.main.navigation_view.*
+import org.koin.android.viewmodel.ext.android.viewModel
 import java.text.Normalizer
 import java.util.regex.Pattern
+import kotlin.math.log
 
 class AddCityDialog:BaseDialog() {
     override fun getLayoutId(): Int = R.layout.dialog_city_picker
@@ -25,6 +28,8 @@ class AddCityDialog:BaseDialog() {
 
     override fun updateUI(savedInstanceState: Bundle?) {
         serRcv()
+        imgCancel.setOnClickListener { dismiss() }
+        rlParent.setOnClickListener { dismiss() }
         edtSearch.addTextChangedListener(object :TextWatcher{
             override fun afterTextChanged(p0: Editable?) {}
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -49,18 +54,21 @@ class AddCityDialog:BaseDialog() {
         fun onSendDataAddCity(id:Int, name:String,country:String)
     }
     private fun serRcv(){
+
         cityAdapter = CityAdapter()
         cityAdapter.setListData(listCity)
         rcvCityDialog.layoutManager = LinearLayoutManager(context)
         rcvCityDialog.adapter = cityAdapter
         cityAdapter.setOnItemClick(object :CityAdapter.OnItemClickCity{
-            override fun onItemClickListener(
-                id: Int,
-                name: String,
-                country: String,
-                position: Int) {
-                onDialogCallback.onSendDataAddCity(id,name,country)
-                dismiss()
+            override fun onItemClickListener(view: View, name: String, position: Int) {
+                for(i in listCity.indices){
+                    if(name == listCity[i].name){
+                        onDialogCallback.onSendDataAddCity(listCity[i].id,listCity[i].name,listCity[i].country)
+                        dismiss()
+
+                    }
+                }
+
             }
         })
     }

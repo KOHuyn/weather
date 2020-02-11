@@ -25,4 +25,12 @@ class AppApiHelper : ApiHelper {
             .build()
             .getObjectSingle(JsonObject::class.java)
     }
+
+    override fun getCurrenWeatherId(id: Int): Single<JsonObject> {
+        return Rx2AndroidNetworking.get(ApiWebserviceConfig.URL_ID)
+            .addQueryParameter("id",id.toString())
+            .addQueryParameter("appid",ApiWebserviceConfig.APIKEY)
+            .build()
+            .getObjectSingle(JsonObject::class.java)
+    }
 }

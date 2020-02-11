@@ -11,6 +11,7 @@ import android.location.*
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.provider.Settings
 import android.util.Log
 import android.view.View
@@ -20,6 +21,7 @@ import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.load.engine.Resource
@@ -50,9 +52,11 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.round
 
-class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogCallback,DeleteDialog.OnDialogCallback,AddCityDialog.OnDialogCallback {
+class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogCallback,
+    DeleteDialog.OnDialogCallback, AddCityDialog.OnDialogCallback {
 
 
     lateinit var sheetBehavior: BottomSheetBehavior<RelativeLayout>
@@ -81,7 +85,7 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
             )
         }
-        checkPermission()
+//        checkPermission()
         setLocation()
         setGPS()
         setDataViewModel()
@@ -89,21 +93,30 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
         setNav()
         setRcvCountry()
         addJson()
+        getListCity()
+        Log.e("abc", homeViewModel.getCity())
         KeyboardUtils.hideKeyBoardWhenClickOutSide(window.decorView.rootView, this)
     }
-    private fun addJson(){
-        var json:String ?= null
+
+    private fun addJson() {
+        var json: String? = null
         try {
             val inputStream: InputStream = assets.open("city.json")
-            json = inputStream.bufferedReader().use{ it.readText()  }
+            json = inputStream.bufferedReader().use { it.readText() }
 
-                var jsonArr = JSONArray(json)
+            var jsonArr = JSONArray(json)
 
-                for (i in 0..jsonArr.length()-1){
-                    var jsonObj = jsonArr.getJSONObject(i)
-                    listCityPicker.add(City(jsonObj.getInt("id"),jsonObj.getString("name"),jsonObj.getString("country")))
-                }
-        }catch (e:IOException){
+            for (i in 0..jsonArr.length() - 1) {
+                var jsonObj = jsonArr.getJSONObject(i)
+                listCityPicker.add(
+                    City(
+                        jsonObj.getInt("id"),
+                        jsonObj.getString("name"),
+                        jsonObj.getString("country")
+                    )
+                )
+            }
+        } catch (e: IOException) {
             e.printStackTrace()
         }
     }
@@ -114,15 +127,15 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        setLocation()
-        setDataViewModel()
-    }
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        setLocation()
+//        setDataViewModel()
+//    }
 
     private fun setDataViewModel() {
         addDispose(homeViewModel.getCurrentWeather(lat, lon),
@@ -135,7 +148,10 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
                     "${round(Utils.convertMstoKmh(parentCurrentWeather.wind.speed)).toInt()} km/h"
                 txt_clouds.text = "${parentCurrentWeather.clouds.all}%"
                 txt_humidity.text = "${parentCurrentWeather.main.humidity}%"
-                txt_sunTime.text = "${Utils.convertLongToTime(parentCurrentWeather.sys.sunrise) } - ${Utils.convertLongToTime(parentCurrentWeather.sys.sunset) }"
+                txt_sunTime.text =
+                    "${Utils.convertLongToTime(parentCurrentWeather.sys.sunrise)} - ${Utils.convertLongToTime(
+                        parentCurrentWeather.sys.sunset
+                    )}"
                 timeZone = parentCurrentWeather.timezone
                 val iconWeather = parentCurrentWeather.weather[0].icon
                 setIconWeather(iconWeather)
@@ -143,6 +159,7 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
                 img_description.animate().alpha(1f).duration = 300
             }
         )
+
         addDispose(homeViewModel.getHourWeather(lat, lon),
             homeViewModel.output.resultHourWeather.subscribe {
                 parentWeather = it
@@ -151,7 +168,7 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
                         HourWeather(
                             Utils.convertKtoC(parentWeather.list[i].main.temp),
                             parentWeather.list[i].weather[0].icon,
-                            Utils.subHour(parentWeather.list[i].dt_txt,timeZone)
+                            Utils.subHour(parentWeather.list[i].dt_txt, timeZone)
                         )
                     )
                 }
@@ -160,7 +177,8 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
                     listDay.add(
                         DayWeather(
                             Utils.convertKtoC(parentWeather.list[i].main.temp),
-                            parentWeather.list[i].weather[0].icon,dayOfWeek(Utils.convertLongToCalendar(parentWeather.list[i].dt)
+                            parentWeather.list[i].weather[0].icon, dayOfWeek(
+                                Utils.convertLongToCalendar(parentWeather.list[i].dt)
                             )
                         )
                     )
@@ -168,8 +186,9 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
                 setRcvDayWeather()
             })
     }
-    private fun dayOfWeek(day:String):String{
-       return when(day){
+
+    private fun dayOfWeek(day: String): String {
+        return when (day) {
             "Mon" -> resources.getText(R.string.str_monday).toString()
             "Tue" -> resources.getText(R.string.str_tuesday).toString()
             "Wed" -> resources.getText(R.string.str_wednesday).toString()
@@ -202,7 +221,7 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
             "03d" -> {
                 img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_3d))
                 txtDestination.text = resources.getText(R.string.str_scattered_clouds)
-        }
+            }
             "03n" -> {
                 img_description.setImageDrawable(resources.getDrawable(R.drawable.bg_3d))
                 txtDestination.text = resources.getText(R.string.str_scattered_clouds)
@@ -260,12 +279,12 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
 
     private fun setNav() {
         img_bgWeather.setOnClickListener { drawerLayout.openDrawer(GravityCompat.END) }
-        btn_back.setOnClickListener { drawerLayout.closeDrawers() }
-        etd_search.setOnFocusChangeListener { view, b ->
+
+        etd_search.setOnClickListener {
             val cityDialog = AddCityDialog()
             cityDialog.setListCity(listCityPicker)
             cityDialog.setOnDialogCallback(this@HomeActivity)
-            cityDialog.show(supportFragmentManager,"addCity")
+            cityDialog.show(supportFragmentManager, "addCity")
         }
     }
 
@@ -362,6 +381,30 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
         rcvDayWeather.adapter = adapterDayWeather
     }
 
+    fun setWeatherCity(position: Int) {
+        addDispose(
+            homeViewModel.getCurrentWeatherId(listCity[position].idCountry),
+            homeViewModel.output.resultCurrentWeather.subscribe {
+                parentCurrentWeather = it
+                txt_name_city.text = parentCurrentWeather.name
+                txtDestination.text = parentCurrentWeather.weather[0].description
+                txt_temp.text = Utils.convertKtoC(parentCurrentWeather.main.temp).toInt().toString()
+                txt_wind.text =
+                    "${round(Utils.convertMstoKmh(parentCurrentWeather.wind.speed)).toInt()} km/h"
+                txt_clouds.text = "${parentCurrentWeather.clouds.all}%"
+                txt_humidity.text = "${parentCurrentWeather.main.humidity}%"
+                txt_sunTime.text =
+                    "${Utils.convertLongToTime(parentCurrentWeather.sys.sunrise)} - ${Utils.convertLongToTime(
+                        parentCurrentWeather.sys.sunset
+                    )}"
+                timeZone = parentCurrentWeather.timezone
+                val iconWeather = parentCurrentWeather.weather[0].icon
+                setIconWeather(iconWeather)
+                animationCollapse()
+                img_description.animate().alpha(1f).duration = 300
+            })
+    }
+
     private fun setRcvCountry() {
         rcvCountry.layoutManager = LinearLayoutManager(this)
         adapterCountry = CountryAdapter()
@@ -369,16 +412,13 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
         rcvCountry.adapter = adapterCountry
         adapterCountry.setOnItemClick(object : CountryAdapter.OnItemClick {
             override fun onItemClickListener(view: View, position: Int) {
-                toast(listCity[position].nameCountry)
+                setWeatherCity(position)
+                Handler().postDelayed({
+                    drawerLayout.closeDrawers()
+                },200)
             }
-
-            override fun onDeleteItem(view: View, position: Int) {
-                val deleteDialog = DeleteDialog()
-                deleteDialog.setOnDialogCallback(this@HomeActivity)
-                deleteDialog.isCancelable = true
-                deleteDialog.show(supportFragmentManager,"delete")
-            }
-        })
+        }
+        )
     }
 
     private fun setGPS() {
@@ -392,39 +432,43 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
         }
     }
 
-    private fun checkPermission() {
+    private fun getLocation(): Location? {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
+            ) == PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
+            locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            val lastKnownLocationGPS: Location? =
+                locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            return lastKnownLocationGPS
+        } else {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                arrayOf(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
                 1
             )
-            return
+            return null
         }
     }
 
-    @SuppressLint("MissingPermission")
     private fun setLocation() {
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val location: Location? =
-            locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-        onLocationChanged(location)
-        if (location != null) {
-            lon = location.longitude
-            lat = location.latitude
+
+        onLocationChanged(getLocation())
+        if (getLocation() != null) {
+            lon = getLocation()!!.longitude
+            lat = getLocation()!!.latitude
         } else {
             toast("Location Null")
         }
         titleMap(lat, lon)
-        Log.e("latlon", "$lat - $lon ")
     }
 
     private fun titleMap(lat: Double, lon: Double) {
@@ -457,13 +501,52 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
     override fun onProviderDisabled(p0: String?) {
     }
 
-    override fun onSendDataDelete(isYes: Boolean) {
-        if(isYes){
+    override fun onSendDataDelete(isYes: Boolean, position: Int) {
+        if (isYes) {
+            listCity.removeAt(position)
+            adapterCountry.notifyDataSetChanged()
             toast("delete")
         }
     }
 
     override fun onSendDataAddCity(id: Int, name: String, country: String) {
-        listCity.add(Country(id,name,country))
+        if (homeViewModel.getCity() == "") {
+            homeViewModel.setCity("123")
+        }
+        homeViewModel.setCity("${homeViewModel.getCity()} $id")
+        Log.e("abcd", homeViewModel.getCity())
+        getListCity()
+    }
+
+    private fun getListCity() {
+        listCity.clear()
+        if (homeViewModel.getCity() != "") {
+            var id: Int
+            val listId = homeViewModel.getCity()?.split(" ") as ArrayList<String>
+            var arrTemp:ArrayList<String> = arrayListOf()
+            for(i in listId.indices){
+                if(!arrTemp.contains(listId[i])){
+                    arrTemp.add(listId[i])
+                }
+            }
+            listId.clear()
+            listId.addAll(arrTemp)
+            for (i in listId.indices) {
+                id = listId[i].toInt()
+                for (x in listCityPicker.indices) {
+                    if (id == listCityPicker[x].id) {
+                        listCity.add(
+                            Country(
+                                listCityPicker[x].id,
+                                listCityPicker[x].name,
+                                listCityPicker[x].country
+                            )
+                        )
+                    }
+                }
+            }
+
+            setRcvCountry()
+        }
     }
 }

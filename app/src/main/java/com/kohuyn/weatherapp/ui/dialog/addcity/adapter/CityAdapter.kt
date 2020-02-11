@@ -42,20 +42,21 @@ class CityAdapter : RecyclerView.Adapter<CityAdapter.CityViewHolder>(), Filterab
 
 
     override fun onBindViewHolder(holder: CityViewHolder, position: Int) {
-        val item = listCountry[holder.adapterPosition]
+        val item = suggestion[holder.adapterPosition]
         holder.onBind(item)
         with(holder.itemView){
             txtNameCity.text = item.name
+
+            holder.itemViewBinding.setOnClickListener {
+                onItemClick.onItemClickListener(it,txtNameCity.text.toString(),position)
+            }
         }
 
-        holder.itemViewBinding.setOnClickListener {
-            onItemClick.onItemClickListener(item.id,item.name,item.country,position)
-        }
     }
 
 
     interface OnItemClickCity{
-        fun onItemClickListener(id:Int, name:String,country:String, position: Int)
+        fun onItemClickListener(view:View, name:String, position: Int)
     }
     override fun getFilter(): Filter {
         return object : Filter() {

@@ -8,8 +8,8 @@
     android:id="@+id/navigationView"
     android:layout_gravity="end">
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <View
             android:id="@+id/bg_view"
@@ -17,17 +17,9 @@
             android:layout_height="@dimen/_120sdp"
             android:background="@color/clr_weather_background_green_forecast"
             />
-        <ImageView
-            android:id="@+id/btn_back"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_20sdp"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:src="@drawable/ic_back"
-            />
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_search"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_marginStart="@dimen/_30sdp"
             android:layout_marginEnd="@dimen/_30sdp"
             android:layout_centerHorizontal="true"
@@ -35,15 +27,17 @@
             android:layout_marginTop="-20dp"
             app:cardCornerRadius="@dimen/_15sdp"
             android:layout_height="@dimen/_30sdp">
-            <EditText
+            <TextView
+                android:layout_gravity="center"
                 android:id="@+id/etd_search"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:textCursorDrawable="@null"
                 android:background="@null"
                 android:singleLine="true"
                 android:hint="@string/str_hint_search"
-                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:textSize="@dimen/_11sdp"
                 android:textColorHint="@color/clr_while_bray"
                 android:drawableStart="@drawable/ic_search_blue"
@@ -56,16 +50,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/cv_search"
-            android:layout_margin="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             tools:listitem="@layout/item_country" />
 
-        <Button
-            android:id="@+id/btnAdd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="+"
-            android:layout_alignParentBottom="true"
-            android:background="@color/clr_transparent"
-            />
     </RelativeLayout>
 </com.google.android.material.navigation.NavigationView>
