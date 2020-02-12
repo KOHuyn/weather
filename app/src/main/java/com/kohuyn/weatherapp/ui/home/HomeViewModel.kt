@@ -73,4 +73,8 @@ class HomeViewModel(
     fun getCity() = dataManager.getCity()
 
     fun setCity(id:String) = dataManager.setCity(id)
+
+    fun setLoadAds(click:Int) =dataManager.setLoadAds(click)
+
+    fun getLoadAds():Int = dataManager.getLoadAds()
 }

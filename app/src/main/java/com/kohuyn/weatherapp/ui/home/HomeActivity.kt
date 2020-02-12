@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.*
 import android.net.Uri
 import android.os.Build
@@ -26,6 +27,8 @@ import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.load.engine.Resource
 import com.core.BaseActivity
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kohuyn.weatherapp.R
 import com.kohuyn.weatherapp.data.model.Country
@@ -34,6 +37,7 @@ import com.kohuyn.weatherapp.data.model.HourWeather
 import com.kohuyn.weatherapp.data.model.city.City
 import com.kohuyn.weatherapp.data.model.currentweather.ParentCurrentWeather
 import com.kohuyn.weatherapp.data.model.hourweather.ParentHourWeather
+import com.kohuyn.weatherapp.ui.adsfullscreen.AdsFullScreenActivity
 import com.kohuyn.weatherapp.ui.dialog.addcity.AddCityDialog
 import com.kohuyn.weatherapp.ui.dialog.delete.DeleteDialog
 import com.kohuyn.weatherapp.ui.dialog.gpsdialog.TurnOnGPSDialog
@@ -43,6 +47,7 @@ import com.kohuyn.weatherapp.ui.home.adapter.HourAdapter
 import com.kohuyn.weatherapp.ui.utils.Utils
 import com.utils.KeyboardUtils
 import com.utils.ext.setVisibility
+import com.utils.ext.startActivity
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.bottom_bar_home.*
 import kotlinx.android.synthetic.main.content_home.*
@@ -75,6 +80,7 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
     private var lon: Double = 0.0
     var isCollapse = false
     var timeZone = 25200
+    private lateinit var titleCity:String
     override fun getLayoutId(): Int = R.layout.activity_home
 
     override fun updateUI(savedInstanceState: Bundle?) {
@@ -86,6 +92,11 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
             )
         }
 //        checkPermission()
+        MobileAds.initialize(this,getString(R.string.ADMOB_APP_ID))
+        ad_view.loadAd(AdRequest.Builder()
+            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+            .addTestDevice("BE67C5471F1F3825AC86C71F21AE1C85")
+            .build())
         setLocation()
         setGPS()
         setDataViewModel()
@@ -94,8 +105,20 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
         setRcvCountry()
         addJson()
         getListCity()
+        swipeRefresh()
         Log.e("abc", homeViewModel.getCity())
         KeyboardUtils.hideKeyBoardWhenClickOutSide(window.decorView.rootView, this)
+    }
+
+    private fun swipeRefresh(){
+        swipeRefresh.setOnRefreshListener {
+            swipeRefresh.isRefreshing = false
+            setHomeWeather()
+            setLocation()
+        }
+        swipeRefresh.setColorSchemeColors(Color.WHITE)
+        swipeRefresh.setProgressBackgroundColorSchemeResource(R.color.clr_transparent)
+
     }
 
     private fun addJson() {
@@ -127,22 +150,12 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
         }
     }
 
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray
-//    ) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        setLocation()
-//        setDataViewModel()
-//    }
 
-    private fun setDataViewModel() {
+    private fun setHomeWeather(){
         addDispose(homeViewModel.getCurrentWeather(lat, lon),
             homeViewModel.output.resultCurrentWeather.subscribe {
                 parentCurrentWeather = it
-//                txt_name_city.text = parentCurrentWeather.name
-//                txtDestination.text = parentCurrentWeather.weather[0].description
+                txt_name_city.text = titleCity
                 txt_temp.text = Utils.convertKtoC(parentCurrentWeather.main.temp).toInt().toString()
                 txt_wind.text =
                     "${round(Utils.convertMstoKmh(parentCurrentWeather.wind.speed)).toInt()} km/h"
@@ -159,7 +172,10 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
                 img_description.animate().alpha(1f).duration = 300
             }
         )
+    }
 
+    private fun setDataViewModel() {
+        setHomeWeather()
         addDispose(homeViewModel.getHourWeather(lat, lon),
             homeViewModel.output.resultHourWeather.subscribe {
                 parentWeather = it
@@ -307,6 +323,12 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
                     isCollapse = false
                 }
                 if (sheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    val click = homeViewModel.getLoadAds()+1
+                    homeViewModel.setLoadAds(click)
+                    if (homeViewModel.getLoadAds()%3==0){
+                        startActivity(AdsFullScreenActivity::class.java)
+                    }
+
                     if (!isCollapse) {
                         animationExpand()
                         val animation =
@@ -387,7 +409,7 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
             homeViewModel.output.resultCurrentWeather.subscribe {
                 parentCurrentWeather = it
                 txt_name_city.text = parentCurrentWeather.name
-                txtDestination.text = parentCurrentWeather.weather[0].description
+//                txtDestination.text = parentCurrentWeather.weather[0].description
                 txt_temp.text = Utils.convertKtoC(parentCurrentWeather.main.temp).toInt().toString()
                 txt_wind.text =
                     "${round(Utils.convertMstoKmh(parentCurrentWeather.wind.speed)).toInt()} km/h"
@@ -460,7 +482,6 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
     }
 
     private fun setLocation() {
-
         onLocationChanged(getLocation())
         if (getLocation() != null) {
             lon = getLocation()!!.longitude
@@ -477,7 +498,7 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
             val addrs: List<Address> = geocoder.getFromLocation(lat, lon, 1)
             if (addrs.isNotEmpty()) {
                 val returnedAddr: Address = addrs[0]
-                txt_name_city.text = "${returnedAddr.thoroughfare}-${returnedAddr.subAdminArea}"
+                titleCity = "${returnedAddr.thoroughfare}-${returnedAddr.subAdminArea}"
             }
         } catch (ex: IOException) {
             ex.printStackTrace()
@@ -545,7 +566,6 @@ class HomeActivity : BaseActivity(), LocationListener, TurnOnGPSDialog.OnDialogC
                     }
                 }
             }
-
             setRcvCountry()
         }
     }

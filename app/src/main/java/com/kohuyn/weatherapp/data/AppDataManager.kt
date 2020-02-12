@@ -21,4 +21,8 @@ class AppDataManager constructor(private val prefsHelper:PrefsHelper,private val
 
     override fun setCity(id_city:String) = prefsHelper.setCity(id_city)
 
+    override fun setLoadAds(click: Int) = prefsHelper.setLoadAds(click)
+
+    override fun getLoadAds(): Int = prefsHelper.getLoadAds()
+
 }

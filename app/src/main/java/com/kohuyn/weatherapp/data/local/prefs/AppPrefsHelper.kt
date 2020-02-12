@@ -9,6 +9,7 @@ class AppPrefsHelper constructor(context:Context,prefsName:String,private val gs
     companion object{
         const val USER = "USER"
         const val CITY = "city"
+        const val LOADADS= "loadads"
     }
     private val sharedPreferences:SharedPreferences = context.getSharedPreferences(prefsName,Context.MODE_PRIVATE)
 
@@ -23,4 +24,10 @@ class AppPrefsHelper constructor(context:Context,prefsName:String,private val gs
     override fun setCity(id_city:String) {
        sharedPreferences.edit().putString(CITY,id_city).apply()
     }
+
+    override fun setLoadAds(click: Int) {
+        sharedPreferences.edit().putInt(LOADADS,click).apply()
+    }
+
+    override fun getLoadAds(): Int = sharedPreferences.getInt(LOADADS,1)
 }

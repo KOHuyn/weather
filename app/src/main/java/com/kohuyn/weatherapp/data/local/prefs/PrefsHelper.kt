@@ -10,4 +10,8 @@ interface PrefsHelper {
     fun getCity():String?
 
     fun setCity(id_city:String)
+
+    fun setLoadAds(click:Int)
+
+    fun getLoadAds():Int
 }
